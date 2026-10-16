@@ -1,0 +1,654 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#11152d">
+<title>Khushi's Little Diary</title>
+
+<style>
+:root {
+  --bg: #0e1227;
+  --panel: #191e3b;
+  --paper: #fffaf0;
+  --ink: #393750;
+  --lavender: #c8b8ff;
+  --muted: #a6a9c9;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at top, #282448 0%, transparent 55%),
+    var(--bg);
+  color: #f5f1ff;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+button, input, textarea { font: inherit; }
+
+button {
+  cursor: pointer;
+  transition: .2s ease;
+}
+
+button:hover { transform: translateY(-1px); }
+
+.topbar {
+  padding: 22px 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid #ffffff12;
+}
+
+.brand {
+  font-size: 23px;
+  color: var(--lavender);
+}
+
+.brand small {
+  display: block;
+  margin-top: 5px;
+  font: 12px Arial, sans-serif;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+
+.status {
+  font: 12px Arial, sans-serif;
+  color: #b8edcf;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  gap: 28px;
+  max-width: 1200px;
+  padding: 28px 22px 50px;
+  margin: auto;
+}
+
+.sidebar {
+  background: #ffffff08;
+  border: 1px solid #ffffff12;
+  border-radius: 18px;
+  padding: 18px;
+  align-self: start;
+}
+
+.side-heading {
+  font-size: 19px;
+  margin: 0 0 14px;
+  color: var(--lavender);
+}
+
+.primary, .secondary, .danger {
+  border: 0;
+  border-radius: 10px;
+  padding: 11px 14px;
+}
+
+.primary {
+  background: var(--lavender);
+  color: #201a3b;
+  font-weight: bold;
+}
+
+.secondary {
+  background: #ffffff10;
+  color: #f5f1ff;
+  border: 1px solid #ffffff1c;
+}
+
+.danger {
+  background: #713d5b;
+  color: white;
+}
+
+.full { width: 100%; }
+
+.page-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 17px;
+}
+
+.entry-link {
+  text-align: left;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 11px;
+  background: #ffffff08;
+  color: white;
+  overflow-wrap: anywhere;
+}
+
+.entry-link.active {
+  background: #c8b8ff1b;
+  border-color: #c8b8ff70;
+}
+
+.entry-link strong {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.entry-link small {
+  color: var(--muted);
+  font: 11px Arial, sans-serif;
+}
+
+.sidebar-note {
+  color: var(--muted);
+  font: 12px/1.6 Arial, sans-serif;
+  margin-top: 22px;
+}
+
+.workspace { min-width: 0; }
+
+.welcome {
+  text-align: center;
+  margin: 0 0 23px;
+}
+
+.welcome h1 {
+  font-size: clamp(25px, 4vw, 36px);
+  font-weight: normal;
+  margin: 0 0 8px;
+}
+
+.welcome p {
+  color: var(--muted);
+  font: 13px/1.6 Arial, sans-serif;
+  margin: 0;
+}
+
+.notebook {
+  display: grid;
+  grid-template-columns: 13px minmax(0, 1fr);
+  max-width: 760px;
+  margin: auto;
+  filter: drop-shadow(0 18px 30px #0005);
+}
+
+.spine {
+  background: linear-gradient(90deg, #65518d, #aa91dc, #65518d);
+  border-radius: 5px 0 0 5px;
+}
+
+.paper {
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 31px,
+      #9f9bd326 32px
+    ),
+    var(--paper);
+  color: var(--ink);
+  border-radius: 0 9px 9px 0;
+  padding: clamp(20px, 5vw, 48px);
+  min-height: 550px;
+  position: relative;
+}
+
+.paper:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #d5c6e7;
+}
+
+.page-number {
+  text-align: right;
+  font: 11px Arial, sans-serif;
+  color: #9690aa;
+  margin-bottom: 20px;
+}
+
+.entry-title {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #4b3c71;
+  font-size: 26px;
+  font-weight: bold;
+  padding: 0 0 12px;
+  border-bottom: 1px solid #b8a6d5;
+}
+
+.entry-date {
+  display: block;
+  margin: 14px 0 22px;
+  color: #8a7d9e;
+  font: 12px Arial, sans-serif;
+}
+
+.entry-body {
+  display: block;
+  width: 100%;
+  min-height: 310px;
+  resize: vertical;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  font: 16px/32px Georgia, serif;
+  padding: 0;
+}
+
+.entry-body::placeholder,
+.entry-title::placeholder {
+  color: #b6aec2;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  justify-content: center;
+  align-items: center;
+  margin: 22px auto 0;
+  max-width: 760px;
+}
+
+.toolbar button { min-width: 92px; }
+
+.page-count {
+  width: 100%;
+  text-align: center;
+  font: 12px Arial, sans-serif;
+  color: var(--muted);
+  margin-top: 9px;
+}
+
+.bottom-note {
+  text-align: center;
+  color: #777c9e;
+  font: 12px/1.7 Arial, sans-serif;
+  margin-top: 32px;
+}
+
+@media (max-width: 720px) {
+  .topbar { padding: 18px; }
+  .layout {
+    grid-template-columns: 1fr;
+    padding: 20px 14px 35px;
+    gap: 20px;
+  }
+  .sidebar { order: 2; }
+  .workspace { order: 1; }
+  .paper { min-height: 490px; padding: 25px 21px; }
+  .entry-body { min-height: 300px; }
+  .toolbar button { flex: 1 1 28%; }
+}
+</style>
+</head>
+
+<body>
+<header class="topbar">
+  <div class="brand">
+    ✦ Khushi's Little Diary
+    <small>A LITTLE SPACE THAT IS YOURS</small>
+  </div>
+  <div class="status" id="saveStatus" aria-live="polite">
+    ● Ready to write
+  </div>
+</header>
+
+<main class="layout">
+  <aside class="sidebar">
+    <h2 class="side-heading">Your pages ✧</h2>
+    <button class="primary full" id="newPage">+ New page</button>
+
+    <div class="page-list" id="pageList"></div>
+
+    <p class="sidebar-note">
+      Little thoughts, long stories, random memories.
+      There's room for all of them here.
+    </p>
+
+    <hr style="border-color:#ffffff15;margin:20px 0">
+
+    <button class="secondary full" id="exportBtn">
+      Save a backup
+    </button>
+    <button class="secondary full" id="importBtn"
+      style="margin-top:9px">
+      Restore a backup
+    </button>
+    <input id="importFile" type="file"
+      accept=".json,application/json" hidden>
+
+    <button class="danger full" id="deleteBtn"
+      style="margin-top:18px">
+      Delete this page
+    </button>
+  </aside>
+
+  <section class="workspace">
+    <div class="welcome">
+      <h1>A page for your thoughts ✦</h1>
+      <p>No perfect words needed. Just write what feels like you.</p>
+    </div>
+
+    <div class="notebook">
+      <div class="spine"></div>
+      <article class="paper">
+        <div class="page-number" id="pageNumber">PAGE 01</div>
+
+        <input class="entry-title" id="entryTitle"
+          maxlength="120" placeholder="Give this page a name..."
+          aria-label="Page title">
+
+        <time class="entry-date" id="entryDate"></time>
+
+        <textarea class="entry-body" id="entryBody"
+          placeholder="Dear diary,&#10;&#10;Today I feel like..."
+          aria-label="Diary writing area"
+          spellcheck="true"></textarea>
+      </article>
+    </div>
+
+    <div class="toolbar">
+      <button class="secondary" id="prevBtn">← Previous</button>
+      <button class="primary" id="nextBtn">Next →</button>
+      <button class="secondary" id="downloadBtn">Export page</button>
+    </div>
+    <div class="page-count" id="pageCount"></div>
+
+    <p class="bottom-note">
+      Made of little moments and stardust.<br>
+      Your words, your pace, your own little universe.
+    </p>
+  </section>
+</main>
+
+<script>
+(() => {
+  "use strict";
+
+  const STORAGE_KEY = "khushi_little_diary_v1";
+
+  const $ = id => document.getElementById(id);
+  const titleInput = $("entryTitle");
+  const bodyInput = $("entryBody");
+
+  let pages = [];
+  let currentId = null;
+  let saveTimer = null;
+
+  function makePage() {
+    return {
+      id: (crypto.randomUUID
+        ? crypto.randomUUID()
+        : Date.now() + "-" + Math.random()),
+      title: "",
+      body: "",
+      created: new Date().toISOString(),
+      updated: new Date().toISOString()
+    };
+  }
+
+  function loadPages() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      const parsed = saved ? JSON.parse(saved) : null;
+
+      if (Array.isArray(parsed) && parsed.length) {
+        pages = parsed.filter(p =>
+          p && typeof p.id === "string" &&
+          typeof p.title === "string" &&
+          typeof p.body === "string"
+        );
+      }
+    } catch (error) {
+      console.error("Could not read diary storage:", error);
+    }
+
+    if (!pages.length) pages = [makePage()];
+    currentId = pages[0].id;
+  }
+
+  function currentPage() {
+    return pages.find(p => p.id === currentId) || pages[0];
+  }
+
+  function persist() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(pages));
+      $("saveStatus").textContent = "● Saved on this device";
+      return true;
+    } catch (error) {
+      $("saveStatus").textContent = "● Save failed";
+      alert("The browser could not save your diary. Export a backup.");
+      return false;
+    }
+  }
+
+  function saveCurrent() {
+    const page = currentPage();
+    if (!page) return;
+
+    page.title = titleInput.value;
+    page.body = bodyInput.value;
+    page.updated = new Date().toISOString();
+
+    persist();
+    renderList();
+    updateCount();
+  }
+
+  function scheduleSave() {
+    $("saveStatus").textContent = "● Saving...";
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveCurrent, 200);
+  }
+
+  function formatDate(value) {
+    return new Intl.DateTimeFormat(undefined, {
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    }).format(new Date(value));
+  }
+
+  function renderPage() {
+    const page = currentPage();
+    if (!page) return;
+
+    titleInput.value = page.title;
+    bodyInput.value = page.body;
+    $("entryDate").textContent =
+      "Started " + formatDate(page.created);
+    $("pageNumber").textContent =
+      "PAGE " + String(pages.indexOf(page) + 1).padStart(2, "0");
+
+    $("prevBtn").disabled = pages.indexOf(page) === 0;
+    $("nextBtn").disabled = pages.indexOf(page) === pages.length - 1;
+
+    $("prevBtn").style.opacity = $("prevBtn").disabled ? ".4" : "1";
+    $("nextBtn").style.opacity = $("nextBtn").disabled ? ".4" : "1";
+
+    renderList();
+    updateCount();
+  }
+
+  function renderList() {
+    const list = $("pageList");
+    list.replaceChildren();
+
+    pages.forEach((page, index) => {
+      const button = document.createElement("button");
+      button.className = "entry-link" +
+        (page.id === currentId ? " active" : "");
+
+      const title = document.createElement("strong");
+      title.textContent = page.title.trim() || "Untitled page";
+
+      const date = document.createElement("small");
+      date.textContent = formatDate(page.updated || page.created);
+
+      button.append(title, date);
+      button.addEventListener("click", () => {
+        saveCurrent();
+        currentId = page.id;
+        renderPage();
+      });
+
+      list.append(button);
+    });
+  }
+
+  function updateCount() {
+    const totalWords = pages.reduce((sum, page) => {
+      return sum + (page.body.trim()
+        ? page.body.trim().split(/\s+/).length : 0);
+    }, 0);
+
+    $("pageCount").textContent =
+      pages.length + (pages.length === 1 ? " page" : " pages") +
+      " · " + totalWords + (totalWords === 1 ? " word" : " words");
+  }
+
+  function createPage() {
+    saveCurrent();
+    const page = makePage();
+    pages.push(page);
+    currentId = page.id;
+    persist();
+    renderPage();
+    titleInput.focus();
+  }
+
+  function goTo(direction) {
+    saveCurrent();
+    const index = pages.findIndex(p => p.id === currentId);
+    const target = pages[index + direction];
+    if (!target) return;
+    currentId = target.id;
+    renderPage();
+  }
+
+  function download(filename, content, type) {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  titleInput.addEventListener("input", scheduleSave);
+  bodyInput.addEventListener("input", scheduleSave);
+
+  $("newPage").addEventListener("click", createPage);
+  $("prevBtn").addEventListener("click", () => goTo(-1));
+  $("nextBtn").addEventListener("click", () => goTo(1));
+
+  $("deleteBtn").addEventListener("click", () => {
+    if (pages.length === 1) {
+      alert("Keep at least one page in your diary.");
+      return;
+    }
+
+    if (!confirm("Delete this page permanently? Export a backup first if needed.")) {
+      return;
+    }
+
+    pages = pages.filter(p => p.id !== currentId);
+    currentId = pages[0].id;
+    persist();
+    renderPage();
+  });
+
+  $("exportBtn").addEventListener("click", () => {
+    saveCurrent();
+    download(
+      "khushi-diary-backup.json",
+      JSON.stringify(pages, null, 2),
+      "application/json"
+    );
+  });
+
+  $("downloadBtn").addEventListener("click", () => {
+    saveCurrent();
+    const page = currentPage();
+    const text = (page.title || "Untitled page") + "\n" +
+      "Started: " + formatDate(page.created) + "\n\n" + page.body;
+
+    download(
+      "diary-page.txt",
+      text,
+      "text/plain;charset=utf-8"
+    );
+  });
+
+  $("importBtn").addEventListener("click", () => {
+    $("importFile").click();
+  });
+
+  $("importFile").addEventListener("change", async event => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      const imported = JSON.parse(await file.text());
+
+      if (!Array.isArray(imported) || !imported.length ||
+          !imported.every(p =>
+            p && typeof p.id === "string" &&
+            typeof p.title === "string" &&
+            typeof p.body === "string" &&
+            typeof p.created === "string"
+          )) {
+        throw new Error("Invalid diary backup");
+      }
+
+      if (!confirm("Restore this backup? It will replace the current diary.")) {
+        return;
+      }
+
+      clearTimeout(saveTimer);
+      pages = imported.map(p => ({
+        id: p.id,
+        title: p.title,
+        body: p.body,
+        created: p.created,
+        updated: p.updated || p.created
+      }));
+
+      currentId = pages[0].id;
+      if (persist()) renderPage();
+    } catch (error) {
+      alert("That backup could not be read. Your current diary was not imported.");
+    } finally {
+      event.target.value = "";
+    }
+  });
+
+  window.addEventListener("pagehide", () => {
+    clearTimeout(saveTimer);
+    saveCurrent();
+  });
+
+  loadPages();
+  renderPage();
+})();
+</script>
+</body>
+</html>
